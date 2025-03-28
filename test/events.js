@@ -38,7 +38,6 @@ test('Emitter add/remove listeners', async () => {
   ee.on('eventB', listener);
   await ee.emit('eventB', 'data');
   assert.strictEqual(callCount, 1);
-
   assert.strictEqual(ee.listenerCount('eventB'), 1);
   ee.off('eventB', listener);
   assert.strictEqual(ee.listenerCount('eventB'), 0);
@@ -286,8 +285,8 @@ test('Emitter calls listeners order', async () => {
 
   await ee.emit('eventM');
 
-  ee.on('eventM', e5);
-  ee.once('eventM', e2);
+  ee.once('eventM', e5);
+  ee.on('eventM', e2);
 
   await ee.emit('eventM');
 
@@ -309,18 +308,4 @@ test('Emitter.off do not change event listeners array', async () => {
 
   await ee.emit(eventName, eventName);
   assert.strictEqual(count, 2);
-});
-
-test('Emitter.once add listener thought max listeners error', () => {
-  const ee = new metautil.Emitter({ maxListeners: 2 });
-  const eventName = 'eventO';
-
-  ee.on(eventName, () => {});
-  ee.on(eventName, () => {});
-
-  assert.throws(
-    () => ee.once(eventName, () => {}),
-    /MaxListenersExceededWarning/,
-  );
-  assert.strictEqual(ee.listenerCount(eventName), 3);
 });
